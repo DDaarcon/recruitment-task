@@ -4,12 +4,13 @@ namespace ZadanieRekrutacyjne.Classes {
 	public partial class Stage {
 		public readonly char INTACT_CHAR = ' ';
 		public readonly char SHOT_CHAR = 'X';
+		public readonly char MISS_CHAR = 'O';
 		
 
 		public enum ShipPresence {Empty, Ship}
-		public enum ShotState {Intact, Shot}
+		public enum ShotState {Intact, Shot, Miss}
 
-		public Stage oppnentsStage;
+		public Stage opponentsStage {get; set;}
 
 		private ShipPresence[,] shipBoard;
 		public ShotState[,] shotBoard {get; private set;}
@@ -39,8 +40,15 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 
-		public Stage() {
+		public Stage(int[] ships) {
 			InitializeArrays();
+			PlaceShips(ships);
+		}
+
+		public Stage(Stage opponent, int[] ships) {
+			InitializeArrays();
+			opponentsStage = opponent;
+			PlaceShips(ships);
 		}
 
 		public void PlaceShips(int[] shipsLengths) {
@@ -76,13 +84,27 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 
-		public ShipPresence ReciveAttack(int x, int y) {
+		public ShipPresence ReceiveAttack(int x, int y) {
 			if (shipBoard[x, y] == ShipPresence.Ship) {
 				shotBoard[x, y] = ShotState.Shot;
+				visibleCharacters[x * 10 + y] = SHOT_CHAR;
+			} else {
+				shotBoard[x, y] = ShotState.Miss;
+				visibleCharacters[x * 10 + y] = MISS_CHAR;
 			}
 			return shipBoard[x, y];
 		}
 
+		public bool DealAttack(int x, int y) {
+			// already shot here
+			if (opponentsStage.shotBoard != ShotState.Intact) {
+				return false;
+			}
+			else {
+				opponentsStage.ReceiveAttack(x, y);
+				return true;
+			}
+		}
 
 
 }
