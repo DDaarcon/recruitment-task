@@ -120,13 +120,8 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 
 			if (!gotFromPossibleTargets) {
-				Random random = new Random();
-
-				do {
-					coords.x = random.Next(Stage.STAGE_WIDTH);
-					coords.y = random.Next(Stage.STAGE_HEIGHT);
-				} while (!ownStage.DealAttack(coords.x, coords.y));
-			}
+				coords = BetterRandomGuess();
+				ownStage.DealAttack(coords.x, coords.y);
 
 			result = ownStage.opponentsStage.shotBoard[coords.x, coords.y];
 
