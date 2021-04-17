@@ -97,7 +97,7 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public bool DealAttack(int x, int y) {
 			// already shot here
-			if (opponentsStage.shotBoard != ShotState.Intact) {
+			if (opponentsStage.shotBoard[x, y] != ShotState.Intact) {
 				return false;
 			}
 			else {
