@@ -2,6 +2,9 @@ using System;
 
 namespace ZadanieRekrutacyjne.Classes {
 	public partial class Stage {
+		public readonly char INTACT_CHAR = ' ';
+		public readonly char SHOT_CHAR = 'X';
+		
 
 		public enum ShipPresence {Empty, Ship}
 		public enum ShotState {Intact, Shot}
@@ -13,7 +16,6 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public char[] visibleCharacters = new char[100];
 
-		public char character = 'g';
 
 		private void SetAllCharacters(char c) {
 			for (int i = 0; i < 100; i++) {
@@ -22,7 +24,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 		public Stage() {
-
+			SetAllCharacters(INTACT_CHAR);
 		}
 
 
