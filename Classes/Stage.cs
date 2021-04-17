@@ -20,6 +20,7 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public char[] visibleCharacters {get; private set;}
 
+		public int[] shipsLengths {get; private set;}
 		public bool recievedAttack {get; private set;}
 		public bool allShipsSunk {get; private set;}
 
@@ -72,6 +73,8 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 		public void PlaceShips(int[] shipsLengths) {
+			this.shipsLengths = shipsLengths;
+
 			var random = new Random();
 			for (int i = 0; i < shipsLengths.Length; i++) {
 				bool horizontal = random.Next(1) == 1 ? true : false;
