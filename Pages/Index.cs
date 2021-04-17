@@ -11,6 +11,8 @@ namespace ZadanieRekrutacyjne.Pages {
 		public Stage stage2;
 		private AI ai1, ai2;
 
+		public int turns = 0;
+
 		private int[] ships = {
 			5, 4, 3, 3, 2
 		};
@@ -28,6 +30,7 @@ namespace ZadanieRekrutacyjne.Pages {
 
 			if (firstPlayerTurn) {
 				ai1.DealBetterAttack();
+				turns++;
 			} else {
 				ai2.DealBetterAttack();
 			}
