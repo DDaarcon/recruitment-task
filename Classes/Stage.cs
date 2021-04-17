@@ -2,9 +2,12 @@ using System;
 
 namespace ZadanieRekrutacyjne.Classes {
 	public partial class Stage {
-		public readonly char INTACT_CHAR = ' ';
-		public readonly char SHOT_CHAR = 'X';
-		public readonly char MISS_CHAR = 'O';
+		public static readonly char INTACT_CHAR = ' ';
+		public static readonly char SHOT_CHAR = 'X';
+		public static readonly char MISS_CHAR = 'O';
+
+		public static readonly int STAGE_WIDTH = 10;
+		public static readonly int STAGE_HEIGHT = 10;
 		
 
 		public enum ShipPresence {Empty, Ship}
@@ -31,18 +34,30 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 		private void InitializeArrays() {
-			shipBoard = new ShipPresence[10,10];
-			shotBoard = new ShotState[10, 10];
-			visibleCharacters = new char[100];
-			for (int i = 0; i < 10; i++) {
-				for (int j = 0; j < 10; j++) {
+			shipBoard = new ShipPresence[STAGE_WIDTH, STAGE_HEIGHT];
+			shotBoard = new ShotState[STAGE_WIDTH, STAGE_HEIGHT];
+			visibleCharacters = new char[STAGE_WIDTH * STAGE_HEIGHT];
+
+			for (int i = 0; i < STAGE_WIDTH; i++) {
+				for (int j = 0; j < STAGE_HEIGHT; j++) {
 					shipBoard[i, j] = ShipPresence.Empty;
 					shotBoard[i, j] = ShotState.Intact;
-					visibleCharacters[i * 10 + j] = INTACT_CHAR;
+					visibleCharacters[i * STAGE_WIDTH + j] = INTACT_CHAR;
 				}
 			}
 			recievedAttack = false;
 			allShipsSunk = false;
+		}
+
+		private bool CheckIfAllShipsAreSunk(){
+			for (int i = 0; i < STAGE_WIDTH; i++) {
+				for (int j = 0; j < STAGE_HEIGHT; j++) {
+					if (shipBoard[i, j] == ShipPresence.Ship && !(shotBoardLength[i, j] == ShotState.Shot)) {
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 
 		public Stage(int[] ships) {
@@ -64,8 +79,8 @@ namespace ZadanieRekrutacyjne.Classes {
 				// pick random position until available is found
 				while (true) {
 					int xPos, yPos;
-					xPos = random.Next(10 - (horizontal ? shipsLengths[i] : 0));
-					yPos = random.Next(10 - (!horizontal ? shipsLengths[i] : 0));
+					xPos = random.Next(STAGE_WIDTH - (horizontal ? shipsLengths[i] : 0));
+					yPos = random.Next(STAGE_HEIGHT - (!horizontal ? shipsLengths[i] : 0));
 
 					bool collision = false;
 					for (int sLen = 0; sLen < shipsLengths[i]; sLen++) {
@@ -92,26 +107,29 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public ShipPresence ReceiveAttack(int x, int y) {
 			if (recievedAttack) throw new Exception("Already recieved attack");
+			if (allShipsSunk) return ShipPresence.Empty;
 
 			if (shipBoard[x, y] == ShipPresence.Ship) {
 				shotBoard[x, y] = ShotState.Shot;
-				visibleCharacters[x * 10 + y] = SHOT_CHAR;
+				visibleCharacters[x * STAGE_WIDTH + y] = SHOT_CHAR;
 
 			} else {
 				shotBoard[x, y] = ShotState.Miss;
-				visibleCharacters[x * 10 + y] = MISS_CHAR;
+				visibleCharacters[x * STAGE_WIDTH + y] = MISS_CHAR;
 			}
 			recievedAttack = true;
 			return shipBoard[x, y];
 		}
 
 		public bool DealAttack(int x, int y) {
+			if (allShipsSunk) return false;
 			// already shot here
 			if (opponentsStage.shotBoard[x, y] != ShotState.Intact) {
 				return false;
 			}
 			else {
 				opponentsStage.ReceiveAttack(x, y);
+				allShipsSunk = CheckIfAllShipsAreSunk();
 				recievedAttack = false;
 				return true;
 			}
