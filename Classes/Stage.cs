@@ -2,6 +2,11 @@ using System;
 
 namespace ZadanieRekrutacyjne.Classes {
 	public partial class Stage {
+		private class ShipData {
+			public int startX, startY;
+			public bool horizontal;
+		}
+
 		public static readonly char INTACT_CHAR = ' ';
 		public static readonly char SHOT_CHAR = 'X';
 		public static readonly char MISS_CHAR = 'O';
@@ -15,18 +20,24 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public Stage opponentsStage {get; set;}
 
+		private ShipData[] shipsData;
 		private ShipPresence[,] shipBoard;
 		public ShotState[,] shotBoard {get; private set;}
 
 		public char[] visibleCharacters {get; private set;}
 
 		public int[] shipsLengths {get; private set;}
+		public bool[] shipsSunk {get; private set;}
 		public bool recievedAttack {get; private set;}
 		public bool allShipsSunk {get; private set;}
 
 
-		private void PlaceShip(int x, int y, bool horizontal, int length) {
-			for (int i = 0; i < length; i++) {
+		private void PlaceShip(int x, int y, bool horizontal, int index) {
+			shipsData[index].startX = x;
+			shipsData[index].startY = y;
+			shipsData[index].horizontal = horizontal;
+			
+			for (int i = 0; i < shipsLengths[index]; i++) {
 				if (horizontal) {
 					shipBoard[x + i, y] = ShipPresence.Ship;
 				} else {
@@ -50,15 +61,29 @@ namespace ZadanieRekrutacyjne.Classes {
 			allShipsSunk = false;
 		}
 
-		private bool CheckIfAllShipsAreSunk(){
-			for (int i = 0; i < STAGE_WIDTH; i++) {
-				for (int j = 0; j < STAGE_HEIGHT; j++) {
-					if (shipBoard[i, j] == ShipPresence.Ship && !(shotBoard[i, j] == ShotState.Shot)) {
-						return false;
+		private bool CheckIfShipsAreSunk(){
+			bool allAreSunk = true;
+
+			for (int i = 0; i < shipsLengths.Length; i++) {
+				if (shipsSunk[i]) continue;
+
+				bool isSunk = true;
+				for (int j = 0; j < shipsLengths[i]; j++) {
+					int x, y;
+					x = shipsData[i].startX + (shipsData[i].horizontal ? j : 0);
+					y = shipsData[i].startY + (!shipsData[i].horizontal ? j : 0);
+
+					if (shotBoard[x, y] != ShotState.Shot) {
+						isSunk = false;
+						break;
 					}
 				}
+
+				shipsSunk[i] = isSunk;
+				if (!isSunk) allAreSunk = false;
 			}
-			return true;
+
+			return allAreSunk;
 		}
 
 		public Stage(int[] ships) {
@@ -74,6 +99,8 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public void PlaceShips(int[] shipsLengths) {
 			this.shipsLengths = shipsLengths;
+			shipsSunk = new bool[shipsLengths.Length];
+			shipsData = new ShipData[shipsLengths.Length];
 
 			var random = new Random();
 			for (int i = 0; i < shipsLengths.Length; i++) {
@@ -101,7 +128,8 @@ namespace ZadanieRekrutacyjne.Classes {
 					}
 
 					if (!collision) {
-						PlaceShip(xPos, yPos, horizontal, shipsLengths[i]);
+						shipsData[i] = new ShipData();
+						PlaceShip(xPos, yPos, horizontal, i);
 						break;
 					}
 				}
@@ -132,7 +160,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 			else {
 				opponentsStage.ReceiveAttack(x, y);
-				allShipsSunk = CheckIfAllShipsAreSunk();
+				allShipsSunk = CheckIfShipsAreSunk();
 				recievedAttack = false;
 				return true;
 			}
