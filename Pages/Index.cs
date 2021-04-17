@@ -11,6 +11,7 @@ namespace ZadanieRekrutacyjne.Pages {
 		public Stage stage2;
 		private AI ai1, ai2;
 
+		public bool useProbabilityDensityGuessing = false;
 		public int turns = 0;
 		public int wonPlayer = 0;
 
@@ -49,18 +50,21 @@ namespace ZadanieRekrutacyjne.Pages {
 				return false;
 			}
 
-			bool somebool = false;
+			if (useProbabilityDensityGuessing) Console.WriteLine("checked");
 
 			if (firstPlayerTurn) {
-				somebool = ai1.DealBetterAttack();
+				ai1.DealBetterAttack(useProbabilityDensityGuessing);
 				turns++;
 			} else {
-				somebool = ai2.DealBetterAttack();
+				ai2.DealBetterAttack(useProbabilityDensityGuessing);
 			}
-			if (!somebool) return false;
 
 			firstPlayerTurn = !firstPlayerTurn;
 			return true;
+		}
+
+		public void CheckboxClicked(object checkedValue) {
+			useProbabilityDensityGuessing = (bool) checkedValue;
 		}
 	}
 

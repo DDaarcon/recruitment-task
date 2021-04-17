@@ -176,7 +176,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			return bestCoordsToPlace;
 		}
 
-		public bool DealBetterAttack() {
+		public bool DealBetterAttack(bool useProbabilityDensityGuessing) {
 			if (ownStage == null) return false;
 
 			Coords coords = new Coords(0, 0);
@@ -192,7 +192,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 
 			if (!gotFromPossibleTargets) {
-				coords = ProbabilityDensityGuess();
+				coords = useProbabilityDensityGuessing ? ProbabilityDensityGuess() : BetterRandomGuess();
 				ownStage.DealAttack(coords.x, coords.y);
 			}
 			result = ownStage.opponentsStage.shotBoard[coords.x, coords.y];
