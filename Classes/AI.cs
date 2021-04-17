@@ -13,47 +13,11 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 
-		// private int CompareCoords(Coords coords1, Coords coords2, Ship.Direction direction) {
-		// 	if (direction == Ship.Direction.Horizontal) {
-		// 		return coords1.x.CompareTo(coords2.x);
-		// 	}
-		// 	else if (direction == Ship.Direction.Vertical) {
-		// 		return coords2.y.CompareTo(coords2.y);
-		// 	}
-		// }
-
-		// private class Ship {
-		// 	public enum Direction {Horizontal, Vertical, Unknown}
-		// 	public Direction direction;
-		// 	public bool destroyed;
-		// 	public List<Coords> alreadyHit;
-		// 	public List<Coords> possibleTargets;
-			
-		// }
-
 		public Stage ownStage;
-		// private Ship[] foundEnemyShips;
 		private List<Coords> alreadyHit = new List<Coords>();
 		private Queue<Coords> possibleTargets = new Queue<Coords>();
 		public void DealBetterAttack() {
 			if (ownStage == null) return;
-
-			// foreach (Ship ship in foundEnemyShips) {
-			// 	if (ship.destroyed) continue;
-
-			// 	if (ship.possibleTargets.Count > 0) {
-			// 		Coords coords = ship.possibleTargets[0];
-			// 		ship.possibleTargets.RemoveAt(0);
-
-			// 		Stage.ShotState result = ownStage.DealAttack(coords.x, coords.y);
-
-			// 		// resolve given result
-			// 		if (ship.direction == Ship.Direction.Unknown) {
-			// 			Coords previousHit = ship.alreadyHit[0];
-
-			// 		}
-			// 	}
-			// }
 
 			Coords coords = new Coords(0, 0);
 			Stage.ShotState result;

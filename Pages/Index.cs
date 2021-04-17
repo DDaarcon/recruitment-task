@@ -24,19 +24,6 @@ namespace ZadanieRekrutacyjne.Pages {
 		}
 
 		public void NextMove() {
-			// var random = new Random();
-			// int xPos, yPos;
-			// if (firstPlayerTurn) {
-			// 	do {
-			// 		xPos = random.Next(10);
-			// 		yPos = random.Next(10);
-			// 	} while (!stage1.DealAttack(xPos, yPos));
-			// } else {
-			// 	do {
-			// 		xPos = random.Next(10);
-			// 		yPos = random.Next(10);
-			// 	} while (!stage2.DealAttack(xPos, yPos));
-			// }
 			if (stage1.allShipsSunk || stage2.allShipsSunk) return;
 
 			if (firstPlayerTurn) {
