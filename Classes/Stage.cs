@@ -17,6 +17,9 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public char[] visibleCharacters {get; private set;}
 
+		public bool recievedAttack {get; private set;}
+		public bool allShipsSunk {get; private set;}
+
 
 		private void PlaceShip(int x, int y, bool horizontal, int length) {
 			for (int i = 0; i < length; i++) {
@@ -38,6 +41,8 @@ namespace ZadanieRekrutacyjne.Classes {
 					visibleCharacters[i * 10 + j] = INTACT_CHAR;
 				}
 			}
+			recievedAttack = false;
+			allShipsSunk = false;
 		}
 
 		public Stage(int[] ships) {
@@ -56,6 +61,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			for (int i = 0; i < shipsLengths.Length; i++) {
 				bool horizontal = random.Next(1) == 1 ? true : false;
 
+				// pick random position until available is found
 				while (true) {
 					int xPos, yPos;
 					xPos = random.Next(10 - (horizontal ? shipsLengths[i] : 0));
@@ -85,13 +91,17 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 		public ShipPresence ReceiveAttack(int x, int y) {
+			if (recievedAttack) throw new Exception("Already recieved attack");
+
 			if (shipBoard[x, y] == ShipPresence.Ship) {
 				shotBoard[x, y] = ShotState.Shot;
 				visibleCharacters[x * 10 + y] = SHOT_CHAR;
+
 			} else {
 				shotBoard[x, y] = ShotState.Miss;
 				visibleCharacters[x * 10 + y] = MISS_CHAR;
 			}
+			recievedAttack = true;
 			return shipBoard[x, y];
 		}
 
@@ -102,6 +112,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 			else {
 				opponentsStage.ReceiveAttack(x, y);
+				recievedAttack = false;
 				return true;
 			}
 		}
