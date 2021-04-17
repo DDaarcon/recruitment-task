@@ -52,7 +52,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		private bool CheckIfAllShipsAreSunk(){
 			for (int i = 0; i < STAGE_WIDTH; i++) {
 				for (int j = 0; j < STAGE_HEIGHT; j++) {
-					if (shipBoard[i, j] == ShipPresence.Ship && !(shotBoardLength[i, j] == ShotState.Shot)) {
+					if (shipBoard[i, j] == ShipPresence.Ship && !(shotBoard[i, j] == ShotState.Shot)) {
 						return false;
 					}
 				}

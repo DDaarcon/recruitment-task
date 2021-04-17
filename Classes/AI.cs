@@ -71,8 +71,8 @@ namespace ZadanieRekrutacyjne.Classes {
 				Random random = new Random();
 
 				do {
-					coords.x = random.Next(10);
-					coords.y = random.Next(10);
+					coords.x = random.Next(Stage.STAGE_WIDTH);
+					coords.y = random.Next(Stage.STAGE_HEIGHT);
 				} while (!ownStage.DealAttack(coords.x, coords.y));
 			}
 
@@ -90,11 +90,11 @@ namespace ZadanieRekrutacyjne.Classes {
 					possibleTargets.Enqueue(nextPossibleTarget);
 				}
 				nextPossibleTarget = new Coords(coords.x + 1, coords.y);
-				if (coords.x < 9) {
+				if (coords.x < Stage.STAGE_WIDTH - 1) {
 					possibleTargets.Enqueue(nextPossibleTarget);
 				}
 				nextPossibleTarget = new Coords(coords.x, coords.y + 1);
-				if (coords.y < 9) {
+				if (coords.y < Stage.STAGE_HEIGHT - 1) {
 					possibleTargets.Enqueue(nextPossibleTarget);
 				}
 			}
