@@ -23,10 +23,18 @@ namespace ZadanieRekrutacyjne.Pages {
 			ai1 = new AI(stage1);
 			ai2 = new AI(stage2);
 			stage1.opponentsStage = stage2;
+
 		}
 
-		public void NextMove() {
-			if (stage1.allShipsSunk || stage2.allShipsSunk) return;
+		public void PlayTillEnd() {
+			while (NextMove()) {}
+		}
+
+		public void NextMoveBtn() {
+			NextMove();
+		}
+		public bool NextMove() {
+			if (stage1.allShipsSunk || stage2.allShipsSunk) return false;
 
 			if (firstPlayerTurn) {
 				ai1.DealBetterAttack();
@@ -36,6 +44,7 @@ namespace ZadanieRekrutacyjne.Pages {
 			}
 
 			firstPlayerTurn = !firstPlayerTurn;
+			return true;
 		}
 	}
 
