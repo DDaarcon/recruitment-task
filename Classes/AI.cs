@@ -23,14 +23,17 @@ namespace ZadanieRekrutacyjne.Classes {
 			int shortest = opponentsStage.shipsLengths[0];
 
 			for (int i = 0; i < opponentsStage.shipsLengths.Length; i++) {
-				if (opponentsStage.shipsLengths[i] < shortest && !opponentsStage.shipsSunk[i])
+				if (opponentsStage.shipsLengths[i] < shortest && !opponentsStage.shipsSank[i])
 					shortest = opponentsStage.shipsLengths[i];
 			}
 
 			return shortest;
 		}
 
-		private Coords ProbabilityDensityHelper(ref int[,] probabilityMap, int shipLength) {
+		/**
+		<summary>Probability counting helper method</summary>
+		**/
+		private Coords ProbabilityDensityHelper(int[,] probabilityMap, int shipLength) {
 			Stage opponentsStage = ownStage.opponentsStage;
 			Coords highestProbabilityCoords = new Coords(0, 0);
 			int highestProbabilityValue = 0;
@@ -39,7 +42,7 @@ namespace ZadanieRekrutacyjne.Classes {
 				for (int y = 0; y < Stage.STAGE_HEIGHT - shipLength; y++) {
 					bool canBePut = true;
 
-					// check if can be placed horizontally
+					// check if ship could be placed horizontally
 					for (int sX = x; sX < x + shipLength; sX++) {
 						if (opponentsStage.shotBoard[sX, x] != Stage.ShotState.Intact) {
 							canBePut = false;
@@ -58,7 +61,7 @@ namespace ZadanieRekrutacyjne.Classes {
 						}
 					}
 
-					// check if can be placed vertically
+					// check if ship could be placed vertically
 					canBePut = true;
 					for (int sY = y; sY < y + shipLength; sY++) {
 						if (opponentsStage.shotBoard[x, sY] != Stage.ShotState.Intact) {
@@ -82,6 +85,9 @@ namespace ZadanieRekrutacyjne.Classes {
 			return highestProbabilityCoords;
 		}
 
+		/**
+		<summary>Get random guess from available</summary>
+		**/
 		private Coords BetterRandomGuess() {
 			Random random = new Random();
 			Stage opponentsStage = ownStage.opponentsStage;
@@ -157,6 +163,9 @@ namespace ZadanieRekrutacyjne.Classes {
 			return coords;
 		}
 
+		/**
+		<summary>Probability density guessing</summary>
+		**/
 		private Coords ProbabilityDensityGuess() {
 			int[,] probabilityMap = new int[Stage.STAGE_WIDTH, Stage.STAGE_HEIGHT];
 			Stage opponentsStage = ownStage.opponentsStage;
@@ -169,13 +178,16 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 
 			for (int i = 0; i < opponentsStage.shipsLengths.Length; i++) {
-				if (opponentsStage.shipsSunk[i]) continue;
-				bestCoordsToPlace = ProbabilityDensityHelper(ref probabilityMap, opponentsStage.shipsLengths[i]);
+				if (opponentsStage.shipsSank[i]) continue;
+				bestCoordsToPlace = ProbabilityDensityHelper(probabilityMap, opponentsStage.shipsLengths[i]);
 			}
 
 			return bestCoordsToPlace;
 		}
 
+		/**
+		<summary>Main method for dealing attack to opponent, uses random/probability related guessing</summary>
+		**/
 		public bool DealBetterAttack(bool useProbabilityDensityGuessing) {
 			if (ownStage == null) return false;
 

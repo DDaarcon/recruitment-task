@@ -41,11 +41,11 @@ namespace ZadanieRekrutacyjne.Pages {
 			NextMove();
 		}
 		public bool NextMove() {
-			if (stage1.allShipsSunk) {
+			if (stage1.allShipsSank) {
 				wonPlayer = 2;
 				return false;
 			}
-			if (stage2.allShipsSunk) {
+			if (stage2.allShipsSank) {
 				wonPlayer = 1;
 				return false;
 			}

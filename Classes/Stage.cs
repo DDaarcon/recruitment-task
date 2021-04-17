@@ -18,20 +18,47 @@ namespace ZadanieRekrutacyjne.Classes {
 		public enum ShipPresence {Empty, Ship}
 		public enum ShotState {Intact, Shot, Miss}
 
+		/**
+		<value>Reference to opponents Stage</value>
+		**/
 		public Stage opponentsStage {get; set;}
 
 		private ShipData[] shipsData;
+		/**
+		<value>Array that store ship presence data</value>
+		**/
 		private ShipPresence[,] shipBoard;
+		/**
+		<value>Array that store information about recieved shots</value>
+		**/
 		public ShotState[,] shotBoard {get; private set;}
 
+		/**
+		<value>Characters displayed on board, on screen</value>
+		**/
 		public char[] visibleCharacters {get; private set;}
 
+		/**
+		<value>Lengths of ships present on board</value>
+		**/
 		public int[] shipsLengths {get; private set;}
-		public bool[] shipsSunk {get; private set;}
+		/**
+		<value>Information of ships that have sunk</value>
+		**/
+		public bool[] shipsSank {get; private set;}
+		/**
+		<value>Have this Stage already recieved shot?</value>
+		**/
 		public bool recievedAttack {get; private set;}
-		public bool allShipsSunk {get; private set;}
+		/**
+		<value>Lost game</value>
+		**/
+		public bool allShipsSank {get; private set;}
 
 
+		/**
+		<summary>Place ship on the board and store data about it</summary>
+		**/
 		private void PlaceShip(int x, int y, bool horizontal, int index) {
 			shipsData[index].startX = x;
 			shipsData[index].startY = y;
@@ -45,6 +72,9 @@ namespace ZadanieRekrutacyjne.Classes {
 				}
 			}
 		}
+		/**
+		<summary>Initialize array after start</summary>
+		**/
 		private void InitializeArrays() {
 			shipBoard = new ShipPresence[STAGE_WIDTH, STAGE_HEIGHT];
 			shotBoard = new ShotState[STAGE_WIDTH, STAGE_HEIGHT];
@@ -58,32 +88,36 @@ namespace ZadanieRekrutacyjne.Classes {
 				}
 			}
 			recievedAttack = false;
-			allShipsSunk = false;
+			allShipsSank = false;
 		}
 
-		private bool CheckIfShipsAreSunk(){
-			bool allAreSunk = true;
+		/**
+		<summary>Update shipsSank data</summary>
+		<return>All ships have sunk?</return>
+		**/
+		private bool CheckIfShipsAreSank(){
+			bool allAreSank = true;
 
 			for (int i = 0; i < shipsLengths.Length; i++) {
-				if (shipsSunk[i]) continue;
+				if (shipsSank[i]) continue;
 
-				bool isSunk = true;
+				bool isSank = true;
 				for (int j = 0; j < shipsLengths[i]; j++) {
 					int x, y;
 					x = shipsData[i].startX + (shipsData[i].horizontal ? j : 0);
 					y = shipsData[i].startY + (!shipsData[i].horizontal ? j : 0);
 
 					if (shotBoard[x, y] != ShotState.Shot) {
-						isSunk = false;
+						isSank = false;
 						break;
 					}
 				}
 
-				shipsSunk[i] = isSunk;
-				if (!isSunk) allAreSunk = false;
+				shipsSank[i] = isSank;
+				if (!isSank) allAreSank = false;
 			}
 
-			return allAreSunk;
+			return allAreSank;
 		}
 
 		public Stage(int[] ships) {
@@ -97,12 +131,16 @@ namespace ZadanieRekrutacyjne.Classes {
 			PlaceShips(ships);
 		}
 
+		/**
+		<summary>Randomly place ships on the board with given lengths of them</summary>
+		**/
 		public void PlaceShips(int[] shipsLengths) {
 			this.shipsLengths = shipsLengths;
-			shipsSunk = new bool[shipsLengths.Length];
+			shipsSank = new bool[shipsLengths.Length];
 			shipsData = new ShipData[shipsLengths.Length];
 
 			var random = new Random();
+
 			for (int i = 0; i < shipsLengths.Length; i++) {
 				bool horizontal = random.Next(1) == 1 ? true : false;
 
@@ -138,7 +176,7 @@ namespace ZadanieRekrutacyjne.Classes {
 
 		public ShipPresence ReceiveAttack(int x, int y) {
 			if (recievedAttack) throw new Exception("Already recieved attack");
-			if (allShipsSunk) return ShipPresence.Empty;
+			if (allShipsSank) return ShipPresence.Empty;
 
 			if (shipBoard[x, y] == ShipPresence.Ship) {
 				shotBoard[x, y] = ShotState.Shot;
@@ -153,13 +191,13 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 		public bool DealAttack(int x, int y) {
-			if (allShipsSunk) return false;
+			if (allShipsSank) return false;
 			// already shot here
 			if (opponentsStage.shotBoard[x, y] != ShotState.Intact) {
 				return false;
 			}
 			opponentsStage.ReceiveAttack(x, y);
-			allShipsSunk = CheckIfShipsAreSunk();
+			allShipsSank = CheckIfShipsAreSank();
 			recievedAttack = false;
 			return true;
 		}
