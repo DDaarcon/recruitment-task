@@ -16,6 +16,94 @@ namespace ZadanieRekrutacyjne.Classes {
 		public Stage ownStage;
 		private List<Coords> alreadyHit = new List<Coords>();
 		private Queue<Coords> possibleTargets = new Queue<Coords>();
+
+
+		private int GetShortestPossibleShipLength() {
+			Stage opponentsStage = ownStage.opponentsStage;
+			int shortest = opponentsStage.shipsLengths[0];
+
+			for (int i = 0; i < opponentsStage.shipsLengths.Length; i++) {
+				if (opponentsStage.shipsLengths[i] < shortest && !opponentsStage.shipsSunk[i])
+					shortest = opponentsStage.shipsLengths[i];
+			}
+
+			return shortest;
+		}
+
+		private Coords BetterRandomGuess() {
+			Random random = new Random();
+			Stage opponentsStage = ownStage.opponentsStage;
+			Coords coords;
+
+			while (true) {
+				coords.x = random.Next(Stage.STAGE_WIDTH);
+				coords.y = random.Next(Stage.STAGE_HEIGHT);
+
+				// if guessed cell has been already shot - guess next
+				if (opponentsStage.shotBoard[coords.x, coords.y] != Stage.ShotState.Intact) continue;
+
+				int shortestLen = GetShortestPossibleShipLength();
+				int possibleLengthFound = 1;
+				bool fits = false;
+
+				// go left and count intact cells
+				for (int xLeft = coords.x - 1; 
+					xLeft >= 0 && opponentsStage.shotBoard[xLeft, coords.y] == Stage.ShotState.Intact;
+					xLeft--) 
+				{
+					possibleLengthFound++;
+					if (possibleLengthFound >= shortestLen) {
+						fits = true;
+						break;
+					}
+				}
+				if (fits) break;
+				
+				// go right
+				for (int xRight = coords.x + 1;
+					xRight < Stage.STAGE_WIDTH && opponentsStage.shotBoard[xRight, coords.y] == Stage.ShotState.Intact;
+					xRight++)
+				{
+					possibleLengthFound++;
+					if (possibleLengthFound >= shortestLen) {
+						fits = true;
+						break;
+					}
+				}
+				if (fits) break;
+
+				possibleLengthFound = 1;
+
+				// go up
+				for (int yUp = coords.y - 1;
+					yUp >= 0 && opponentsStage.shotBoard[coords.x, yUp] == Stage.ShotState.Intact;
+					yUp--)
+				{
+					possibleLengthFound++;
+					if (possibleLengthFound >= shortestLen) {
+						fits = true;
+						break;
+					}
+				}
+				if (fits) break;
+
+				// go down
+				for (int yDown = coords.y + 1;
+					yDown < Stage.STAGE_HEIGHT && opponentsStage.shotBoard[coords.x, yDown] == Stage.ShotState.Intact;
+					yDown++)
+				{
+					possibleLengthFound++;
+					if (possibleLengthFound >= shortestLen) {
+						fits = true;
+						break;
+					}
+				}
+				if (fits) break;
+			}
+
+			return coords;
+		}
+
 		public void DealBetterAttack() {
 			if (ownStage == null) return;
 
