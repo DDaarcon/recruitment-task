@@ -30,6 +30,58 @@ namespace ZadanieRekrutacyjne.Classes {
 			return shortest;
 		}
 
+		private Coords ProbabilityDensityHelper(ref int[,] probabilityMap, int shipLength) {
+			Stage opponentsStage = ownStage.opponentsStage;
+			Coords highestProbabilityCoords = new Coords(0, 0);
+			int highestProbabilityValue = 0;
+
+			for (int x = 0; x < Stage.STAGE_WIDTH - shipLength; x++) {
+				for (int y = 0; y < Stage.STAGE_HEIGHT - shipLength; y++) {
+					bool canBePut = true;
+
+					// check if can be placed horizontally
+					for (int sX = x; sX < x + shipLength; sX++) {
+						if (opponentsStage.shotBoard[sX, x] != Stage.ShotState.Intact) {
+							canBePut = false;
+							break;
+						}
+					}
+					// increase probability
+					if (canBePut) {
+						for (int sX = x; sX < x + shipLength; sX++) {
+							probabilityMap[sX, y]++;
+							if (probabilityMap[sX, y] > highestProbabilityValue) {
+								highestProbabilityCoords.x = sX;
+								highestProbabilityCoords.y = y;
+								highestProbabilityValue = probabilityMap[sX, y];
+							}
+						}
+					}
+
+					// check if can be placed vertically
+					canBePut = true;
+					for (int sY = y; sY < y + shipLength; sY++) {
+						if (opponentsStage.shotBoard[x, sY] != Stage.ShotState.Intact) {
+							canBePut = false;
+							break;
+						}
+					}
+					if (canBePut) {
+						for (int sY = y; sY < y + shipLength; sY++) {
+							probabilityMap[x, sY]++;
+							if (probabilityMap[x, sY] > highestProbabilityValue) {
+								highestProbabilityCoords.x = x;
+								highestProbabilityCoords.y = sY;
+								highestProbabilityValue = probabilityMap[x, sY];
+							}
+						}
+					}
+				}
+			}
+
+			return highestProbabilityCoords;
+		}
+
 		private Coords BetterRandomGuess() {
 			Random random = new Random();
 			Stage opponentsStage = ownStage.opponentsStage;
@@ -104,6 +156,25 @@ namespace ZadanieRekrutacyjne.Classes {
 			return coords;
 		}
 
+		private Coords ProbabilityDensityGuess() {
+			int[,] probabilityMap = new int[Stage.STAGE_WIDTH, Stage.STAGE_HEIGHT];
+			Stage opponentsStage = ownStage.opponentsStage;
+			Coords bestCoordsToPlace = new Coords(0, 0);
+		
+			for (int i = 0; i < Stage.STAGE_WIDTH; i++) {
+				for (int j = 0; j < Stage.STAGE_HEIGHT; j++) {
+					probabilityMap[i, j] = 0;
+				}
+			}
+
+			for (int i = 0; i < opponentsStage.shipsLengths.Length; i++) {
+				if (opponentsStage.shipsSunk[i]) continue;
+				bestCoordsToPlace = ProbabilityDensityHelper(ref probabilityMap, opponentsStage.shipsLengths[i]);
+			}
+
+			return bestCoordsToPlace;
+		}
+
 		public void DealBetterAttack() {
 			if (ownStage == null) return;
 
@@ -120,9 +191,9 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 
 			if (!gotFromPossibleTargets) {
-				coords = BetterRandomGuess();
+				coords = ProbabilityDensityGuess();
 				ownStage.DealAttack(coords.x, coords.y);
-
+			}
 			result = ownStage.opponentsStage.shotBoard[coords.x, coords.y];
 
 			// ship hit, add possible targets
