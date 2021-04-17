@@ -89,6 +89,15 @@ using ZadanieRekrutacyjne.Shared;
         {
         }
         #pragma warning restore 1998
+#nullable restore
+#line 12 "/home/darek/Programming/ZadanieRekrutacyjne/Components/Stage.razor"
+       
+	[Parameter]
+	public ZadanieRekrutacyjne.Classes.Stage stageReference {get; set;}
+
+#line default
+#line hidden
+#nullable disable
     }
 }
 #pragma warning restore 1591

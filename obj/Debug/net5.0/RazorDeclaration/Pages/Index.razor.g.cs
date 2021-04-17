@@ -90,7 +90,7 @@ using ZadanieRekrutacyjne.Components;
 #line hidden
 #nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/")]
-    public partial class Index : Microsoft.AspNetCore.Components.ComponentBase
+    public partial class Index : ZadanieRekrutacyjne.Pages.IndexClass
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
