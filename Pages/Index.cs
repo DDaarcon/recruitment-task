@@ -12,6 +12,7 @@ namespace ZadanieRekrutacyjne.Pages {
 		private AI ai1, ai2;
 
 		public int turns = 0;
+		public int wonPlayer = 0;
 
 		private int[] ships = {
 			5, 4, 3, 3, 2
@@ -27,21 +28,36 @@ namespace ZadanieRekrutacyjne.Pages {
 		}
 
 		public void PlayTillEnd() {
-			while (NextMove()) {}
+			int safetyCounter = 0;
+			while (safetyCounter < 200) {
+				if (!NextMove()) break;
+				safetyCounter++;
+			}
+			if (safetyCounter == 200) Console.WriteLine("safetyExit");
 		}
 
 		public void NextMoveBtn() {
 			NextMove();
 		}
 		public bool NextMove() {
-			if (stage1.allShipsSunk || stage2.allShipsSunk) return false;
+			if (stage1.allShipsSunk) {
+				wonPlayer = 2;
+				return false;
+			}
+			if (stage2.allShipsSunk) {
+				wonPlayer = 1;
+				return false;
+			}
+
+			bool somebool = false;
 
 			if (firstPlayerTurn) {
-				ai1.DealBetterAttack();
+				somebool = ai1.DealBetterAttack();
 				turns++;
 			} else {
-				ai2.DealBetterAttack();
+				somebool = ai2.DealBetterAttack();
 			}
+			if (!somebool) return false;
 
 			firstPlayerTurn = !firstPlayerTurn;
 			return true;

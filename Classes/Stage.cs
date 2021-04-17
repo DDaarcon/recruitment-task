@@ -158,12 +158,10 @@ namespace ZadanieRekrutacyjne.Classes {
 			if (opponentsStage.shotBoard[x, y] != ShotState.Intact) {
 				return false;
 			}
-			else {
-				opponentsStage.ReceiveAttack(x, y);
-				allShipsSunk = CheckIfShipsAreSunk();
-				recievedAttack = false;
-				return true;
-			}
+			opponentsStage.ReceiveAttack(x, y);
+			allShipsSunk = CheckIfShipsAreSunk();
+			recievedAttack = false;
+			return true;
 		}
 
 

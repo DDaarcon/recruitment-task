@@ -88,8 +88,9 @@ namespace ZadanieRekrutacyjne.Classes {
 			Coords coords;
 
 			while (true) {
-				coords.x = random.Next(Stage.STAGE_WIDTH);
+				coords.x = random.Next(Stage.STAGE_WIDTH / 2) * 2;
 				coords.y = random.Next(Stage.STAGE_HEIGHT);
+				if (coords.y % 2 == 1) coords.x++;
 
 				// if guessed cell has been already shot - guess next
 				if (opponentsStage.shotBoard[coords.x, coords.y] != Stage.ShotState.Intact) continue;
@@ -175,8 +176,8 @@ namespace ZadanieRekrutacyjne.Classes {
 			return bestCoordsToPlace;
 		}
 
-		public void DealBetterAttack() {
-			if (ownStage == null) return;
+		public bool DealBetterAttack() {
+			if (ownStage == null) return false;
 
 			Coords coords = new Coords(0, 0);
 			Stage.ShotState result;
@@ -217,7 +218,7 @@ namespace ZadanieRekrutacyjne.Classes {
 				}
 			}
 
-			return;
+			return true;
 		}
 
 
