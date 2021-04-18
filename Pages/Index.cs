@@ -49,9 +49,7 @@ namespace ZadanieRekrutacyjne.Pages {
 				wonPlayer = 1;
 				return false;
 			}
-
-			if (useProbabilityDensityGuessing) Console.WriteLine("checked");
-
+			
 			if (firstPlayerTurn) {
 				ai1.DealBetterAttack(useProbabilityDensityGuessing);
 				turns++;
