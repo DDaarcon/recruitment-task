@@ -1,4 +1,7 @@
 # Battleship simulation
+branch [24h](https://github.com/DDaarcon/recruitment-task/tree/24h) - program after 24h hours, during that time I declared to finish it
+master branch - program with further modifications
+
 [Stage.cs](https://github.com/DDaarcon/recruitment-task/blob/master/Classes/Stage.cs) - class responsible for representation of board and operations on it:
 - picks random positions for ships,
 - recieves attacks and deals them to opponents Stage,
