@@ -1,4 +1,6 @@
 # Battleship simulation
+this branch has an issue with Probability Density Guessing :(
+
 [Stage.cs](https://github.com/DDaarcon/recruitment-task/blob/master/Classes/Stage.cs) - class responsible for representation of board and operations on it:
 - picks random positions for ships,
 - recieves attacks and deals them to opponents Stage,
