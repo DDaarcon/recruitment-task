@@ -30,57 +30,112 @@ namespace ZadanieRekrutacyjne.Classes {
 			return shortest;
 		}
 
-		/**
-		<summary>Probability counting helper method</summary>
-		**/
-		private Coords ProbabilityDensityHelper(int[,] probabilityMap, int shipLength) {
+		private int GetMinInt(params int[] values) {
+			int min = values[0];
+			for (int i = 1; i < values.Length; i++) {
+				if (values[i] < min) min = values[i];
+			}
+			return min;
+		}
+
+		private Coords ProbabilityDensityHelper(int[,] probabilityMap, int[] shipsLengths) {
 			Stage opponentsStage = ownStage.opponentsStage;
+			int[] shipsLengthsCopy = shipsLengths.Clone() as int[];
+			// sort ascending
+			Array.Sort(shipsLengthsCopy);
 			Coords highestProbabilityCoords = new Coords(0, 0);
 			int highestProbabilityValue = 0;
 
-			for (int x = 0; x < Stage.STAGE_WIDTH - shipLength; x++) {
-				for (int y = 0; y < Stage.STAGE_HEIGHT - shipLength; y++) {
-					bool canBePut = true;
+			// go horizontally
+			for (int line = 0; line < Stage.STAGE_HEIGHT; line++) {
+				int countIntactFields = 0;
 
-					// check if ship could be placed horizontally
-					for (int sX = x; sX < x + shipLength; sX++) {
-						if (opponentsStage.shotBoard[sX, x] != Stage.ShotState.Intact) {
-							canBePut = false;
-							break;
-						}
+				for (int posInLine = 0; posInLine < Stage.STAGE_WIDTH; posInLine++) {
+					Stage.ShotState fieldsShotState = opponentsStage.shotBoard[posInLine, line];
+
+					// count intact fields in line
+					if (fieldsShotState == Stage.ShotState.Intact) {
+						countIntactFields++;
 					}
-					// increase probability
-					if (canBePut) {
-						for (int sX = x; sX < x + shipLength; sX++) {
-							probabilityMap[sX, y]++;
-							if (probabilityMap[sX, y] > highestProbabilityValue) {
-								highestProbabilityCoords.x = sX;
-								highestProbabilityCoords.y = y;
-								highestProbabilityValue = probabilityMap[sX, y];
+
+					if (fieldsShotState != Stage.ShotState.Intact || posInLine == Stage.STAGE_WIDTH - 1) {
+						// if found [not Intact] filed - count without it
+						// if reached end (and is Intact) - count with it
+						int prevPosInLine = posInLine - (posInLine == Stage.STAGE_WIDTH - 1 ? 0 : 1);
+
+						foreach (int shipLength in shipsLengthsCopy) {
+							if (shipLength > countIntactFields) break;
+							// go through intact fields again
+							for (int intactAgain = 0; intactAgain < countIntactFields; intactAgain++) {
+								int valueToAdd = GetMinInt(
+									intactAgain + 1,
+									countIntactFields - intactAgain,
+									shipLength);
+								
+								probabilityMap[prevPosInLine - countIntactFields + intactAgain + 1, line] += valueToAdd;
+
+								if (probabilityMap[prevPosInLine - countIntactFields + intactAgain + 1, line] > highestProbabilityValue) {
+									highestProbabilityCoords.x = prevPosInLine - countIntactFields + intactAgain + 1;
+									highestProbabilityCoords.y = line;
+									highestProbabilityValue = probabilityMap[prevPosInLine - countIntactFields + intactAgain + 1, line];
+								}
+
 							}
 						}
 					}
+					
+					if (fieldsShotState != Stage.ShotState.Intact) countIntactFields = 0;
 
-					// check if ship could be placed vertically
-					canBePut = true;
-					for (int sY = y; sY < y + shipLength; sY++) {
-						if (opponentsStage.shotBoard[x, sY] != Stage.ShotState.Intact) {
-							canBePut = false;
-							break;
-						}
-					}
-					if (canBePut) {
-						for (int sY = y; sY < y + shipLength; sY++) {
-							probabilityMap[x, sY]++;
-							if (probabilityMap[x, sY] > highestProbabilityValue) {
-								highestProbabilityCoords.x = x;
-								highestProbabilityCoords.y = sY;
-								highestProbabilityValue = probabilityMap[x, sY];
-							}
-						}
-					}
 				}
 			}
+
+			// go vertically
+			for (int lineV = 0; lineV < Stage.STAGE_WIDTH; lineV++) {
+				int countIntactFields = 0;
+
+				for (int posInLineV = 0; posInLineV < Stage.STAGE_HEIGHT; posInLineV++) {
+					Stage.ShotState fieldsShotState = opponentsStage.shotBoard[lineV, posInLineV];
+
+					// count intact fields in line
+					if (fieldsShotState == Stage.ShotState.Intact) {
+						countIntactFields++;
+					}
+					
+					if (fieldsShotState != Stage.ShotState.Intact || posInLineV == Stage.STAGE_HEIGHT - 1) {
+						int prevPosInLineV = posInLineV - (posInLineV == Stage.STAGE_HEIGHT - 1 ? 0 : 1);
+
+						foreach (int shipLength in shipsLengthsCopy) {
+							if (shipLength > countIntactFields) break;
+							// go through intact fields again
+							for (int intactAgain = 0; intactAgain < countIntactFields; intactAgain++) {
+								int valueToAdd = GetMinInt(
+									intactAgain + 1,
+									countIntactFields - intactAgain,
+									shipLength);
+								
+								probabilityMap[lineV, prevPosInLineV - countIntactFields + intactAgain + 1] += valueToAdd;
+
+								if (probabilityMap[lineV, prevPosInLineV - countIntactFields + intactAgain + 1] > highestProbabilityValue) {
+									highestProbabilityCoords.x = lineV;
+									highestProbabilityCoords.y = prevPosInLineV - countIntactFields + intactAgain + 1;
+									highestProbabilityValue = probabilityMap[lineV, prevPosInLineV - countIntactFields + intactAgain + 1];
+								}
+
+							}
+						}
+					}
+
+					if (fieldsShotState != Stage.ShotState.Intact) countIntactFields = 0;
+				}
+			}
+
+			for (int i = 0; i < Stage.STAGE_WIDTH; i++) {
+				for (int j = 0; j < Stage.STAGE_HEIGHT; j++) {
+					Console.Write(probabilityMap[i, j] + " ");
+				}
+				Console.Write('\n');
+			}
+			Console.WriteLine("Highest possiblility coords: x: " + highestProbabilityCoords.x + " y: " + highestProbabilityCoords.y);
 
 			return highestProbabilityCoords;
 		}
@@ -164,7 +219,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 		/**
-		<summary>Probability density guessing</summary>
+		<summary>Probability density guessing (creating probabilityMap and filling it with 0s, calling ProbabilityDensityHelper)</summary>
 		**/
 		private Coords ProbabilityDensityGuess() {
 			int[,] probabilityMap = new int[Stage.STAGE_WIDTH, Stage.STAGE_HEIGHT];
@@ -177,10 +232,7 @@ namespace ZadanieRekrutacyjne.Classes {
 				}
 			}
 
-			for (int i = 0; i < opponentsStage.shipsLengths.Length; i++) {
-				if (opponentsStage.shipsSank[i]) continue;
-				bestCoordsToPlace = ProbabilityDensityHelper(probabilityMap, opponentsStage.shipsLengths[i]);
-			}
+			bestCoordsToPlace = ProbabilityDensityHelper(probabilityMap, opponentsStage.shipsLengths);
 
 			return bestCoordsToPlace;
 		}
