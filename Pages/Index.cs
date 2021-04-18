@@ -12,19 +12,15 @@ namespace ZadanieRekrutacyjne.Pages {
 		private AI ai1, ai2;
 
 		public bool useProbabilityDensityGuessing = false;
-		public int turns = 0;
-		public int wonPlayer = 0;
+		public int turns;
+		public int wonPlayer;
 
 		private int[] ships = {
 			5, 4, 3, 3, 2
 		};
 		protected override void OnInitialized() {
 			
-			stage1 = new Stage(ships);
-			stage2 = new Stage(stage1, ships);
-			ai1 = new AI(stage1);
-			ai2 = new AI(stage2);
-			stage1.opponentsStage = stage2;
+			RestartGame();
 
 		}
 
@@ -49,7 +45,7 @@ namespace ZadanieRekrutacyjne.Pages {
 				wonPlayer = 1;
 				return false;
 			}
-			
+
 			if (firstPlayerTurn) {
 				ai1.DealBetterAttack(useProbabilityDensityGuessing);
 				turns++;
@@ -63,6 +59,16 @@ namespace ZadanieRekrutacyjne.Pages {
 
 		public void CheckboxClicked(object checkedValue) {
 			useProbabilityDensityGuessing = (bool) checkedValue;
+		}
+
+		public void RestartGame() {
+			turns = 0;
+			wonPlayer = 0;
+			stage1 = new Stage(ships);
+			stage2 = new Stage(stage1, ships);
+			ai1 = new AI(stage1);
+			ai2 = new AI(stage2);
+			stage1.opponentsStage = stage2;
 		}
 	}
 
