@@ -21,7 +21,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		/**
 		<value>Reference to opponents Stage</value>
 		**/
-		public Stage opponentsStage {get; set;}
+		internal Stage opponentsStage {get; set;}
 
 		private ShipData[] shipsData;
 		/**
@@ -31,29 +31,29 @@ namespace ZadanieRekrutacyjne.Classes {
 		/**
 		<value>Array that store information about recieved shots</value>
 		**/
-		public ShotState[,] shotBoard {get; private set;}
+		internal ShotState[,] shotBoard {get; private set;}
 
 		/**
 		<value>Characters displayed on board, on screen</value>
 		**/
-		public char[] visibleCharacters {get; private set;}
+		internal char[] visibleCharacters {get; private set;}
 
 		/**
 		<value>Lengths of ships present on board</value>
 		**/
-		public int[] shipsLengths {get; private set;}
+		internal int[] shipsLengths {get; private set;}
 		/**
 		<value>Information of ships that have sunk</value>
 		**/
-		public bool[] shipsSank {get; private set;}
+		internal bool[] shipsSank {get; private set;}
 		/**
 		<value>Have this Stage already recieved shot?</value>
 		**/
-		public bool recievedAttack {get; private set;}
+		internal bool recievedAttack {get; private set;}
 		/**
 		<value>Lost game</value>
 		**/
-		public bool allShipsSank {get; private set;}
+		internal bool allShipsSank {get; private set;}
 
 
 		/**
@@ -134,7 +134,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		/**
 		<summary>Randomly place ships on the board with given lengths of them</summary>
 		**/
-		public void PlaceShips(int[] shipsLengths) {
+		internal void PlaceShips(int[] shipsLengths) {
 			this.shipsLengths = shipsLengths;
 			shipsSank = new bool[shipsLengths.Length];
 			shipsData = new ShipData[shipsLengths.Length];
@@ -174,7 +174,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 
-		public ShipPresence ReceiveAttack(int x, int y) {
+		internal ShipPresence ReceiveAttack(int x, int y) {
 			if (recievedAttack) throw new Exception("Already recieved attack");
 			if (allShipsSank) return ShipPresence.Empty;
 
@@ -190,7 +190,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			return shipBoard[x, y];
 		}
 
-		public bool DealAttack(int x, int y) {
+		internal bool DealAttack(int x, int y) {
 			if (allShipsSank) return false;
 			// already shot here
 			if (opponentsStage.shotBoard[x, y] != ShotState.Intact) {

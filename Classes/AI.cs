@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace ZadanieRekrutacyjne.Classes {
-	public class AI {
+	class AI {
 		struct Coords {
 			public int x;
 			public int y;
@@ -13,7 +13,7 @@ namespace ZadanieRekrutacyjne.Classes {
 			}
 		}
 
-		public Stage ownStage;
+		internal Stage ownStage;
 		private List<Coords> alreadyHit = new List<Coords>();
 		private Queue<Coords> possibleTargets = new Queue<Coords>();
 
@@ -240,7 +240,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		/**
 		<summary>Main method for dealing attack to opponent, uses random/probability related guessing</summary>
 		**/
-		public bool DealBetterAttack(bool useProbabilityDensityGuessing) {
+		internal bool DealBetterAttack(bool useProbabilityDensityGuessing) {
 			if (ownStage == null) return false;
 
 			Coords coords = new Coords(0, 0);
@@ -286,7 +286,7 @@ namespace ZadanieRekrutacyjne.Classes {
 		}
 
 
-		public AI(Stage ownStage) {
+		internal AI(Stage ownStage) {
 			this.ownStage = ownStage;
 		}
 	}

@@ -7,8 +7,8 @@ namespace ZadanieRekrutacyjne.Pages {
 	public class IndexClass : ComponentBase {
 
 		bool firstPlayerTurn = true;
-		public Stage stage1;
-		public Stage stage2;
+		internal Stage stage1;
+		internal Stage stage2;
 		private AI ai1, ai2;
 
 		public bool useProbabilityDensityGuessing = false;
